@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opporix</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div id="intro">
+<div class="line"></div>
+<div class="logo">OPPORIX</div>
+<div class="tagline">Discover opportunities around you</div>
+</div>
+
+<div id="main">
+
+<header>
+<div class="brand">Opporix Dashboard</div>
+<input id="search" placeholder="Search opportunities...">
+</header>
+
+<div class="panel">
+<h3>Best Matches For You</h3>
+<div id="matches"></div>
+</div>
+
+<div class="panel">
+<h3>Trending Opportunities</h3>
+<div class="cards" id="trending"></div>
+</div>
+
+<div class="panel">
+<h3>Alerts</h3>
+<div id="alerts"></div>
+</div>
+
+<div class="panel">
+<h3>Location Intelligence</h3>
+<div id="location"></div>
+</div>
+
+<div class="panel">
+<h3>Profile Strength — 68%</h3>
+<div class="progress"><div class="bar"></div></div>
+<p>Add skills → +10%<br>Add portfolio → +15%</p>
+</div>
+
+<div class="panel">
+<h3>Categories</h3>
+<div class="grid" id="categories"></div>
+</div>
+
+<div class="cards" id="cards"></div>
+
+<footer>Opporix © 2026 • Opportunity Intelligence Platform</footer>
+</div>
+
+<div class="modal" id="modal">
+<div class="modal-box">
+<h2 id="mTitle"></h2>
+<div id="mBody"></div>
+</div>
+</div>
+
+<script>
+
+const skills=["UI","Python","Design"];
+
+const data=[
+{type:"Internship",title:"Frontend Intern",field:"Tech",location:"Remote",deadline:2,popular:true,details:["Company Nova","HTML CSS","Stipend 15k"]},
+{type:"Hackathon",title:"Design Hackfest",field:"Design",location:"Global",deadline:5,popular:true,details:["Prize 50k","Team allowed","UI theme"]},
+{type:"Scholarship",title:"Tech Grant",field:"Tech",location:"India",deadline:1,popular:false,details:["Grant ₹50k","Students","Portfolio"]},
+{type:"Competition",title:"Startup Pitch",field:"Business",location:"Global",deadline:3,popular:true,details:["Prize ₹1L","Solo/team","Idea stage"]}
+];
+
+function match(field){return skills.includes(field)?95:60}
+
+function card(x){
+return `<div class="card">
+<div class="tag">${x.type}</div>
+<b>${x.title}</b>
+<div>${x.location} • closes in ${x.deadline} days</div>
+<div class="badge">${match(x.field)}% match</div>
+<button onclick='openModal(${JSON.stringify(x)})'>View</button>
+</div>`
+}
+
+function render(){
+cards.innerHTML="";
+trending.innerHTML="";
+matches.innerHTML="";
+
+let text=search.value.toLowerCase();
+
+let filtered=data.filter(x=>x.title.toLowerCase().includes(text));
+
+filtered.forEach(x=>cards.innerHTML+=card(x));
+data.filter(x=>x.popular).forEach(x=>trending.innerHTML+=card(x));
+
+data.filter(x=>skills.includes(x.field)).forEach(x=>
+matches.innerHTML+=`<div>${x.title} — ${match(x.field)}%</div>`);
+
+alerts.innerHTML=
+`• ${data.filter(x=>x.deadline<=2).length} deadlines soon<br>
+• ${data.length} active opportunities<br>
+• ${data.filter(x=>x.popular).length} trending`;
+
+location.innerHTML=
+`Opportunities near you: ${data.length}<br>
+Top field: Tech<br>
+Fastest growing: AI/ML`;
+}
+
+function openModal(x){
+modal.style.display="flex";
+mTitle.innerText=x.title;
+mBody.innerHTML=x.details.map(d=>`<p>${d}</p>`).join("");
+}
+
+window.onclick=e=>{if(e.target.id==="modal")modal.style.display="none"}
+
+categories.innerHTML=[
+"Internships","Jobs","Hackathons","Scholarships",
+"Events","Grants","Competitions","Fellowships"
+].map(x=>`<div class="tile">${x}</div>`).join("");
+
+search.oninput=render;
+render();
+
+setTimeout(()=>{
+intro.style.display="none";
+main.style.display="block";
+document.body.style.overflow="auto";
+},5200);
+
+</script>
+
+</body>
+</html>
